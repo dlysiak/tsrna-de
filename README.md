@@ -50,7 +50,7 @@ On finishing the run, the pipeline will generate PDFs and CSVs in the specified 
   8. Run DESeq2 on tsRNA counts
 #### Parameters:
 * Run the following for a breakdown of parameters:
-`nextflow/tsrna-de --help`
+`nextflow run tsrna-de --help`
 
 ## Contributors
 * Paul Donovan, PhD
