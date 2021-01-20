@@ -12,9 +12,6 @@ A Nextflow pipeline for the identification, quantification and analysis of tRNA 
 * collate using MultiQC
 
 ## Quickstart
-
-
-### Installation (via new conda environment)
 ```
 git clone https://github.com/GiantSpaceRobot/tsrna-de.git
 nextflow run tsrna-de --species mouse --input_dir tsrna-de/ExampleData/ --layout tsrna-de/additional-files/Example_ExperimentLayout.csv --output_dir My_Results
