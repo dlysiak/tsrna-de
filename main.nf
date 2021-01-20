@@ -4,7 +4,9 @@
  *# Email: pauldonovandonegal@gmail.com
 */
 
+
 nextflow.enable.dsl = 2
+
 
 // Set default parameters 
 params.input_file = null 
@@ -14,47 +16,20 @@ params.plots = "no"
 params.remove = "no"
 params.layout = ""
 params.input_dir = null
-params.output_dir = "results"
+params.output_dir = "Results"
 params.min_read_length = 16
+params.version = false
 params.help = false
 
-// Input parameter error catching
-/*
-if(!params.input_file && !params.input_dir){
-    exit 1, "Error: No input provided. Provide either --input_file or --input_dir to pipeline"
-}
-*/
-if(params.input_dir && !params.layout){
-    exit 1, "Error: No --layout file provided. See README for an example"
-}
-/*
-if( params.input_file && params.input_dir){
-    exit 1, "Error: Conflicting inputs. Cannot supply both single FASTQ file and FASTQ input directory"
-}
-*/
-
-// Load modules (these inherit the params above if the default params are also declared in the modules)
-include { PREPARE_TRNA_GTF } from './modules/prepare_gtf'
-include { FASTQC } from './modules/fastqc'
-include { MULTIQC } from './modules/multiqc'
-include { MAKE_STAR_DB } from './modules/star_genome-generate'
-include { TRIM_READS } from './modules/trim_galore'
-include { STAR_ALIGN } from './modules/star_align'
-include { SAM_COLLAPSE } from './modules/sam_collapse'
-include { SAM_SPLIT_AND_SAM2BAM } from './modules/sam_split_and_sam2bam'
-include { FEATURE_COUNT_NCRNA } from './modules/count_features_ncrna'
-include { FEATURE_COUNT_TRNA } from './modules/count_features_trna'
-include { TSRNA_INDIVIDUAL_COUNT } from './modules/tsrna_counter'
-include { TSRNA_DESEQ } from './modules/tsrna_deseq2'
 
 
 // Print message for user
 def helpMessage() {
     log.info """\
     
-    ===========
-    tsRNAsearch
-    ===========
+    ========
+    tsrna-de
+    ========
 
     Usage: Single file analysis:
     nextflow run main.nf --species mouse --input_file ExampleData/CytC_IP1.fastq.gz --output_dir Results
@@ -79,36 +54,70 @@ def helpMessage() {
 }
 
 
+// Pipeline version
+version="Version:  tsrna-de 0.1"
+
+
+// Print message for user
+def versionMessage() {
+    log.info """\
+    ${version}
+    """
+}
+
 // Show help message and quit
 if (params.help) {
     helpMessage()
+    versionMessage()
     exit 0
 }
 
 
-// version="tsRNAsearch version 0.32"
+// Show version and quit
+if (params.version) {
+    versionMessage()
+    exit 0
+}
 
-// Get working dir to recreate full path for R script execution
-// my_dir = $projectDir
 
+// Input parameter error catching
+if(!params.input_file && !params.input_dir){
+    exit 1, "Error: No input provided. Provide either --input_file or --input_dir to pipeline"
+}
+if(params.input_dir && !params.layout){
+    exit 1, "Error: No --layout file provided. See README for an example"
+}
+if( params.input_file && params.input_dir){
+    exit 1, "Error: Conflicting inputs. Cannot supply both single FASTQ file and FASTQ input directory"
+}
 //if [[ "$outDir" == */ ]]; then # If outDir has a trailing slash, remove
 //	outDir=$(echo "${outDir::-1}")
 //fi
 
-// $task.cpus   Inbuilt cpus
-// $task.memory  Inbuilt memory
+
+// Load modules (these inherit the params above if the default params are also declared in the modules)
+include { PREPARE_TRNA_GTF } from './modules/prepare_gtf'
+include { FASTQC } from './modules/fastqc'
+include { MULTIQC } from './modules/multiqc'
+include { MAKE_STAR_DB } from './modules/star_genome-generate'
+include { TRIM_READS } from './modules/trim_galore'
+include { STAR_ALIGN } from './modules/star_align'
+include { SAM_COLLAPSE } from './modules/sam_collapse'
+include { SAM_SPLIT_AND_SAM2BAM } from './modules/sam_split_and_sam2bam'
+include { FEATURE_COUNT_NCRNA } from './modules/count_features_ncrna'
+include { FEATURE_COUNT_TRNA } from './modules/count_features_trna'
+include { TSRNA_INDIVIDUAL_COUNT } from './modules/tsrna_counter'
+include { TSRNA_DESEQ } from './modules/tsrna_deseq2'
 
 
 workflow {
     main:
         // Define channels
         ncRNA_gtf = Channel.fromPath("$projectDir/DBs/${params.species}_ncRNAs_relative_cdhit.gtf")
-        //tRNA_gtf = Channel.fromPath("$projectDir/DBs/${params.species}_tRNAs_relative_cdhit.gtf")
         fastq_channel = Channel.fromPath( ["$params.input_dir/*.fastq.gz", "$params.input_dir/*.fq.gz"] )
         //fastq_channel.view()
         PREPARE_TRNA_GTF(params.species)
         //PREPARE_TRNA_GTF.out.tRNA_gtf.view()
-        //reads = Channel.fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
         FASTQC(fastq_channel)
         MULTIQC(FASTQC.out.collect())
         TRIM_READS(fastq_channel, "$params.min_read_length")
@@ -120,19 +129,12 @@ workflow {
         // I should probably output the above as BAM and every other step
         //SAM_COLLAPSE.out.collapsedsam.view()
         SAM_SPLIT_AND_SAM2BAM(SAM_COLLAPSE.out.collapsedsam)
-        //FEATURE_COUNT_NCRNA(ncRNA_gtf, SAM_SPLIT_AND_SAM2BAM.out.bam_ncRNA)
         FEATURE_COUNT_TRNA(SAM_SPLIT_AND_SAM2BAM.out.bam_tRNA, PREPARE_TRNA_GTF.out.tRNA_gtf)
-        // Count total reads mapped and place in file (BYPASSING FOR NOW)
-        // Calculate depth using samtools
         TSRNA_INDIVIDUAL_COUNT(SAM_SPLIT_AND_SAM2BAM.out.bam_tRNA, PREPARE_TRNA_GTF.out.tRNA_gtf)
         //PREPARE_TRNA_GTF.out.tRNA_gtf.view()
-        //TSRNA_DESEQ("$projectDir/${params.layout}", TSRNA_INDIVIDUAL_COUNT.out.tsRNA_individual_counts.collect())
         TSRNA_DESEQ("$launchDir/${params.layout}", TSRNA_INDIVIDUAL_COUNT.out.tsRNA_individual_counts.collect())
 
 
-    //emit:
-    //    TSRNA_INDIVIDUAL_COUNT.out.tsRNA_individual_counts to: "${params.output_dir}"
-    //  MULTIQC.out to: "${params.output_dir}/MultiQC", mode: 'copy'
 
 }
 
