@@ -1,0 +1,19 @@
+name: my-env
+channels:
+    - bioconda
+    - conda-forge
+    - defaults
+dependencies:
+    - star=2.5.2b
+    - multiqc=0.4
+    - python=2.7
+    - trim-galore=0.4.1
+    - numpy=1.15.4
+    #- r=3.5
+    #- samtools
+    #- openssl=1.0
+    #- curl
+    #- pandoc
+    #- libgit2
+    #- ghostscript
+
