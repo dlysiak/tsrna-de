@@ -19,7 +19,7 @@ process TSRNA_INDIVIDUAL_COUNT {
 
     output:
     path("*.tsv"), emit: tsRNA_individual_counts
-    path("*.log"), emit: tsRNA_count_errors
+    //path("*.log"), emit: tsRNA_count_errors
    
     script:
     """

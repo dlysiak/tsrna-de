@@ -72,7 +72,7 @@ for line in sys.stdin:
             else:
                 print("ERROR: unknown CIGAR character: ", i)
                 print("SAM account:\n", splitline)
-        mapping_to = mapping_from + int(read_span_of_tRNA)
+        mapping_to = mapping_from + int(read_span_of_tRNA) - 1 # -1 to correct for mapping start position including the nucleotide it starts with (i.e. starting from 1 INCLUDES 1 in the read mapping)
         SAM_tsRNA = tRNA + "_" + str(mapping_from) + "-" + str(mapping_to)
         if SAM_tsRNA not in giant_tsRNA_dict:
             print("ERROR: ", SAM_tsRNA, " not in dictionary!")

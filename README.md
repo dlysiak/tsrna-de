@@ -12,22 +12,9 @@ A Nextflow pipeline for the identification, quantification and analysis of tRNA 
 * collate using MultiQC
 
 ## Quickstart
-```
-git clone https://github.com/GiantSpaceRobot/tsrna-de.git
-nextflow run tsrna-de --species mouse --input_dir tsrna-de/ExampleData/ --layout tsrna-de/additional-files/Example_ExperimentLayout.csv --output_dir My_Results
-```
-
-### Analysing a single RNA-seq dataset
-We have supplied data to test that the pipeline is functioning correctly:
-
-```
-nextflow run tsrna-de --species mouse --input tsrna-de/ExampleData/CytC_IP1.fastq.gz --output_dir My_Results
-```
-
-On finishing the run, the pipeline will generate PDFs and CSVs in the specified output directory
-
 ### Comparing two conditions (e.g. control vs treatment)
 ```
+git clone https://github.com/GiantSpaceRobot/tsrna-de.git
 nextflow run tsrna-de --species mouse --input_dir tsrna-de/ExampleData/ --layout tsrna-de/additional-files/Example_ExperimentLayout.csv --output_dir My_Results
 ```
 
