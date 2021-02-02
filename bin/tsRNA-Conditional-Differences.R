@@ -6,16 +6,28 @@
 ### 
 ###---------------------------------------------------------
 
-suppressMessages(library(ggplot2))
-suppressMessages(library(dplyr))
-suppressMessages(library(reshape2))
-suppressMessages(library(DESeq2))
-suppressMessages(library(gplots))
-suppressMessages(library(ggrepel))
-suppressMessages(library(RColorBrewer))
-suppressMessages(library(EnhancedVolcano))
-suppressMessages(library(ggpubr))
-suppressMessages(library(gridExtra))
+if(!require(ggplot2)){
+  install.packages("ggplot2", dependencies=TRUE, repos='http://cran.rstudio.com/')
+  suppressMessages(library(ggplot2))
+}
+if(!require(dplyr)){
+  install.packages("dplyr", dependencies=TRUE, repos='http://cran.rstudio.com/')
+  suppressMessages(library(dplyr))
+}
+if(!require(DESeq2)){
+  install.packages("DESeq2", dependencies=TRUE, repos='http://cran.rstudio.com/')
+  suppressMessages(library(DESeq2))
+}
+if(!require(ggrepel)){
+  install.packages("ggrepel", dependencies=TRUE, repos='http://cran.rstudio.com/')
+  suppressMessages(library(ggrepel))
+}
+library(gplots)
+library(EnhancedVolcano)
+#if(!require(EnhancedVolcano)){
+#  install.packages("EnhancedVolcano" dependencies=TRUE, repos='http://cran.rstudio.com/')
+#  suppressMessages(library(EnhancedVolcano))
+#}
 
 args = commandArgs(trailingOnly=TRUE)
 
@@ -231,7 +243,6 @@ ggsave(width = 7,
        height = 7, 
        filename = paste0("VolcanoPlot_", Condition1, "-vs-", Condition2, "_padj.pdf"), 
        plot = volcano) # Save plot using ggplot2 ggsave (error occured using normal R PDF save)
-
 
 
 
