@@ -8,7 +8,8 @@ params.output_dir = 'results'
 //tsRNA_out_dir = params.output_dir/"tsRNA_Data"
 
 process TSRNA_DESEQ {
-    conda '/home/paul/Documents/Applications/Miniconda2/miniconda2/envs/tsrnasearch_env'
+    conda '/home/dlysiak/anaconda3/envs/tsrnasearch_env'
+
     //tag "$tsvfiles"
     publishDir params.output_dir
     //publishDir tsRNA_out_dir
