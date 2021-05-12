@@ -1,0 +1,14 @@
+### STAR   --runMode genomeGenerate   --runThreadN 1   --genomeDir DBs/species_index/human-ncRNAs/   --genomeFastaFiles DBs/human_tRNAs-and-ncRNAs_relative_cdhit.fa   
+versionGenome	20201
+genomeFastaFiles	DBs/human_tRNAs-and-ncRNAs_relative_cdhit.fa 
+genomeSAindexNbases	14
+genomeChrBinNbits	18
+genomeSAsparseD	1
+sjdbOverhang	0
+sjdbFileChrStartEnd	- 
+sjdbGTFfile	-
+sjdbGTFchrPrefix	-
+sjdbGTFfeatureExon	exon
+sjdbGTFtagExonParentTranscript	transcript_id
+sjdbGTFtagExonParentGene	gene_id
+sjdbInsertSave	Basic

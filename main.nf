@@ -123,6 +123,8 @@ workflow {
         TRIM_READS(fastq_channel, "$params.min_read_length")
         //TRIM_READS.out.trimmed_reads.view()
         MAKE_STAR_DB("$projectDir/DBs/${params.species}_tRNAs-and-ncRNAs_relative_cdhit.fa")  // Run process to generate DB
+	//daria added below line for lookalikes instead of *_tRNA-and-ncRNA_relative_cdhit.fa
+        //MAKE_STAR_DB("$projectDir/DBs/${params.species}_tRNAs-and-ncRNAs-and-lookalikes.fa") // Run process to generate DB by Daria
         STAR_ALIGN(TRIM_READS.out.trimmed_reads, MAKE_STAR_DB.out.star_index)
         //STAR_ALIGN.out.sam.view()
         SAM_COLLAPSE(STAR_ALIGN.out.sam)
