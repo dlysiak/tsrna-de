@@ -19,8 +19,14 @@ process MAKE_STAR_DB {
         --runMode genomeGenerate \\
         --genomeDir star_db/ \\
         --genomeFastaFiles $fasta \\
-        --genomeSAindexNbases 8 \\
-        --runThreadN $task.cpus
+	--runThreadN $task.cpus \\
+	// Daria modification below
+        --genomeSAindexNbases 12 \\
+	--genomeSAsparseD 3 \\
+        --genomeChrBinNbits 14 \\
+        
+
+	 
     STAR --version | sed -e "s/STAR_//g" > STAR.version.txt
     """
 
